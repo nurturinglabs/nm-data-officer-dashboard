@@ -1,0 +1,61 @@
+# ── Secrets & credentials (NEVER commit) ─────────────────────────────
+.streamlit/secrets.toml
+secrets.toml
+*.secret
+*.secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+service_account*.json
+
+# ── PRD / internal product docs (keep out of GitHub) ─────────────────
+# Matches any file with "prd" in the name, any case (e.g. PRD.md,
+# nm_data_officer_dashboard_prd.md, product-PRD.md). README.md is kept.
+*[Pp][Rr][Dd]*.md
+*[Pp][Rr][Dd]*.docx
+*[Pp][Rr][Dd]*.pdf
+prd/
+docs/prd/
+!README.md
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.installed.cfg
+
+# ── Virtual environments ─────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ── Testing / tooling caches ─────────────────────────────────────────
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Notebooks ────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── IDE / editor ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS cruft ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
