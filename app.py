@@ -78,7 +78,7 @@ TABS = [
 # ─────────────────────────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="Northwestern Mutual · Chief Data Officer Dashboard",
+    page_title="Northwestern Mutual · NM Series Fund Dashboard",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -210,7 +210,7 @@ def filing_column_chart(df: pd.DataFrame, value_col: str, height: int = 260) -> 
             marker_color=colors,
             text=[fmt_int(v) for v in df[value_col]],
             textposition="outside",
-            textfont=dict(size=10, color="#111827", family="DM Sans"),
+            textfont=dict(size=12, color="#111827", family="DM Sans"),
         )
     )
     layout = nm_plotly_layout(height=height, margin=dict(l=0, r=10, t=20, b=0))
@@ -234,7 +234,7 @@ def filing_line_chart(
             marker=dict(color=NM_YELLOW, size=9, line=dict(color=NM_NAVY, width=1.5)),
             text=[fmt_int(v) for v in df[value_col]],
             textposition="top center",
-            textfont=dict(size=10, color="#111827", family="DM Sans"),
+            textfont=dict(size=12, color="#111827", family="DM Sans"),
         )
     )
     layout = nm_plotly_layout(height=height, margin=dict(l=0, r=10, t=24, b=0))
@@ -260,6 +260,54 @@ def filing_line_chart(
     return fig
 
 
+def filing_heatmap(df: pd.DataFrame, value_col: str, height: int = 160) -> go.Figure:
+    """
+    Single-row heatmap strip over filing dates — color intensity encodes the
+    value. The color scale is stretched to the data range (the values cluster in
+    a narrow band) so differences are visible; the latest filing is outlined in
+    NM yellow and each cell is labelled with its value.
+    """
+    labels = [fmt_month(d) for d in df["filing_date"]]
+    vals = [float(v) for v in df[value_col].tolist()]
+    vmin, vmax = min(vals), max(vals)
+    span = (vmax - vmin) or 1
+    zmin, zmax = vmin - span * 0.20, vmax + span * 0.05
+
+    fig = go.Figure(
+        go.Heatmap(
+            z=[vals],
+            x=labels,
+            y=[""],
+            colorscale=[[0, "#E3ECF7"], [0.5, "#6FA0D0"], [1, "#003366"]],
+            zmin=zmin,
+            zmax=zmax,
+            xgap=5,
+            ygap=5,
+            showscale=False,
+            hovertemplate="%{x}: %{z:,.0f} holdings<extra></extra>",
+        )
+    )
+    # Per-cell value labels with contrast-aware color.
+    for v, lab in zip(vals, labels):
+        norm = (v - zmin) / (zmax - zmin)
+        fig.add_annotation(
+            x=lab, y="", text=fmt_int(v), showarrow=False,
+            font=dict(family="Inter", size=14,
+                      color="#FFFFFF" if norm > 0.5 else "#0F1929"),
+        )
+    # Highlight the latest filing (last cell) in NM yellow.
+    last = len(vals) - 1
+    fig.add_shape(
+        type="rect", xref="x", yref="y",
+        x0=last - 0.5, x1=last + 0.5, y0=-0.5, y1=0.5,
+        line=dict(color=NM_YELLOW, width=3),
+    )
+    layout = nm_plotly_layout(height=height, margin=dict(l=0, r=10, t=10, b=0))
+    layout["yaxis"]["showticklabels"] = False
+    fig.update_layout(**layout)
+    return fig
+
+
 PLOTLY_CFG = {"displayModeBar": False}
 
 
@@ -268,8 +316,8 @@ PLOTLY_CFG = {"displayModeBar": False}
 # ═════════════════════════════════════════════════════════════════════════════
 
 active_tab = nm_header(
-    app_title="Chief Data Officer Dashboard",
-    subtitle="NM Series Funds Data Health · Feb 2025 – May 2026 · Snowflake + dbt",
+    app_title="NM Series Fund Dashboard",
+    subtitle="NPORT-P · 6 quarterly filings · Feb 2025 – May 2026 · Snowflake + dbt",
     tabs=TABS,
     badges=[("● Live data", "green"), ("6 filings", "blue"), ("dbt · PASS=10", "blue")],
 )
@@ -303,10 +351,6 @@ if active_tab == "Data Freshness":
         ]
     )
 
-    nm_chart_title("Holdings per filing date")
-    st.plotly_chart(filing_column_chart(hbf, "holdings"),
-                    use_container_width=True, config=PLOTLY_CFG)
-
     col_left, col_right = st.columns(2)
     with col_left:
         nm_table(
@@ -333,6 +377,10 @@ if active_tab == "Data Freshness":
             rows.append([label, fmt_month(last_updated), fmt_int(row_count)])
         nm_table(columns=["Mart", "Last updated", "Rows"], rows=rows,
                  title="Mart freshness")
+
+    nm_chart_title("Holdings per filing date")
+    st.plotly_chart(filing_heatmap(hbf, "holdings"),
+                    use_container_width=True, config=PLOTLY_CFG)
 
     data_banner()
 
@@ -478,7 +526,7 @@ elif active_tab == "Portfolio Coverage":
         """
         <div style="background:#FFF3CC;border:1px solid #FFB500;border-radius:10px;
                     padding:12px 16px;margin:6px 0 14px;">
-          <span style="font-size:12px;color:#633806;">
+          <span style="font-size:14px;color:#633806;">
           <strong>Sector data gap:</strong> 24 portfolios lack GICS sector
           classification. <em>Production fix:</em> connect to Bloomberg security
           master via CUSIP lookup to auto-tag all 43,367 holdings across all 6 filings.
@@ -501,13 +549,35 @@ elif active_tab == "Portfolio Coverage":
 elif active_tab == "Data Lineage":
     nm_chart_title("Pipeline architecture — source to Streamlit")
 
+    # Color key — explains what the box colors mean in the diagram and cards below.
+    def _legend_item(color, label, desc):
+        return (
+            f'<span style="display:inline-flex;align-items:center;gap:7px;margin-right:22px;">'
+            f'<span style="width:13px;height:13px;border-radius:3px;background:{color};'
+            f'display:inline-block;"></span>'
+            f'<span style="font-size:12.5px;color:#0F1929;">'
+            f'<strong>{label}</strong> — {desc}</span></span>'
+        )
+
+    _render_html(
+        '<div style="background:#fff;border:0.5px solid #E0E8F4;border-radius:10px;'
+        'padding:10px 16px;margin-bottom:12px;display:flex;flex-wrap:wrap;'
+        'align-items:center;row-gap:6px;">'
+        '<span style="font-family:\'Oswald\',sans-serif;text-transform:uppercase;'
+        'letter-spacing:0.04em;font-size:12px;color:#6B7280;margin-right:18px;">Key</span>'
+        + _legend_item("#27500A", "Green", "real, production-quality data")
+        + _legend_item("#CC8800", "Amber", "partial / manual / stub — not production data")
+        + _legend_item("#003366", "Navy", "pipeline & processing stage")
+        + "</div>"
+    )
+
     def flow_box(title, sub, tone="navy"):
         bg = {"navy": "#003366", "green": "#27500A", "amber": "#CC8800"}[tone]
         return (
             f'<div style="background:{bg};color:#fff;border-radius:8px;'
-            f'padding:10px 12px;text-align:center;min-width:150px;">'
-            f'<div style="font-size:12px;font-weight:600;">{title}</div>'
-            f'<div style="font-size:10px;color:#cfe0f2;margin-top:3px;">{sub}</div></div>'
+            f'padding:11px 13px;text-align:center;min-width:150px;">'
+            f'<div style="font-size:13.5px;font-weight:600;">{title}</div>'
+            f'<div style="font-size:11.5px;color:#cfe0f2;margin-top:3px;">{sub}</div></div>'
         )
 
     arrow_down = (
@@ -556,7 +626,7 @@ elif active_tab == "Data Lineage":
     def source_card(title, tone, status, rows):
         border = {"green": "#27500A", "amber": "#CC8800"}[tone]
         body = "".join(
-            f'<div style="font-size:11px;color:#374151;margin:3px 0;">'
+            f'<div style="font-size:12.5px;color:#374151;margin:4px 0;">'
             f'<strong style="color:#0F1929;">{k}:</strong> {v}</div>'
             for k, v in rows
         )
@@ -564,7 +634,8 @@ elif active_tab == "Data Lineage":
             f'<div style="background:#fff;border:0.5px solid #E0E8F4;'
             f'border-left:4px solid {border};border-radius:10px;padding:14px 16px;'
             f'margin-bottom:10px;height:100%;">'
-            f'<div style="font-size:13px;font-weight:600;color:#0F1929;'
+            f'<div style="font-family:\'Oswald\',sans-serif;text-transform:uppercase;'
+            f'letter-spacing:0.03em;font-size:16px;font-weight:600;color:#0F1929;'
             f'margin-bottom:8px;">{title}</div>{body}'
             f'<div style="margin-top:8px;">{status}</div></div>'
         )
@@ -701,7 +772,7 @@ Respond with ONLY a JSON object, no prose, no markdown fences:
     _render_html(
         f"""
         <div class="chart-card" style="border-left:4px solid #FFB500;">
-          <div style="font-size:13px;color:#0F1929;">{WELCOME}</div>
+          <div style="font-size:15px;color:#0F1929;line-height:1.55;">{WELCOME}</div>
         </div>
         """
     )
@@ -792,8 +863,8 @@ Respond with ONLY a JSON object, no prose, no markdown fences:
 
                 if narrative:
                     st.markdown(
-                        f'<div class="chart-card"><div style="font-size:13px;'
-                        f'color:#0F1929;">{narrative}</div></div>',
+                        f'<div class="chart-card"><div style="font-size:15px;'
+                        f'color:#0F1929;line-height:1.55;">{narrative}</div></div>',
                         unsafe_allow_html=True,
                     )
                 if insight:

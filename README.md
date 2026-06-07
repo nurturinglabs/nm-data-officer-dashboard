@@ -1,11 +1,12 @@
-# NM Data Officer Dashboard
+# NM Series Fund Dashboard
 
-Investment Data Health Dashboard for the Investment Data Office at Northwestern
+Investment data-health dashboard for the Investment Data Office at Northwestern
 Mutual. A **data governance and health dashboard** (not an analytics app) showing
 data freshness, quality, portfolio coverage, lineage, and a Claude-powered
-portfolio assistant across 6 NPORT-P filing periods (Feb 2025 – May 2026).
+portfolio assistant across 6 NPORT-P quarterly filings (Feb 2025 – May 2026).
 
 **Stack:** Streamlit · Snowflake (`NM_ANALYTICS.RAW_MARTS`) · Claude · NM theme
+(Oswald + Inter)
 
 ## Tabs
 

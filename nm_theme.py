@@ -79,8 +79,17 @@ PIE_COLORS = ["#003366","#FFB500","#1A6EB5","#CC8800","#4D9FD6","#E6C200","#3366
 
 NM_BASE_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap');
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=DM+Mono&display=swap');
+/* Body / data layer — clean humanist sans */
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 15px; }
+.stApp, .stApp p, .stApp span, .stApp div, .stApp label { font-family: 'Inter', sans-serif; }
+.stApp p { line-height: 1.5; }
+/* Headline / label layer — condensed display, like the NM brand hero (Oswald ≈ NM headline face) */
+.chart-title, .kpi-label, .tbl th, .nm-display {
+    font-family: 'Oswald', 'Inter', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
 .block-container { padding-top: 0.5rem !important; padding-bottom: 1rem !important; padding-left: 1rem !important; padding-right: 1rem !important; }
 div[data-testid="stVerticalBlock"] > div { gap: 0.4rem !important; }
 div[data-testid="element-container"] { margin: 0 !important; }
@@ -91,7 +100,7 @@ div[data-testid="element-container"] { margin: 0 !important; }
     border-radius: 10px; padding: 4px; margin-bottom: 12px; width: fit-content;
 }
 .stTabs [data-baseweb="tab"] {
-    border-radius: 7px; padding: 6px 20px; font-size: 13px;
+    border-radius: 7px; padding: 6px 20px; font-size: 14px;
     font-weight: 500; color: #003366; background: transparent; border: none;
 }
 .stTabs [aria-selected="true"] { background: #003366 !important; color: #FFB500 !important; }
@@ -111,28 +120,28 @@ div[data-testid="stAppViewBlockContainer"] { padding-top: 0.5rem !important; }
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 0;
 }
-.nm-topbar-title { font-size: 16px; font-weight: 500; color: #fff; margin: 0; }
-.nm-topbar-sub { font-size: 11px; color: #B8D4F0; margin: 2px 0 0; }
-.nm-badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 20px; margin-left: 6px; }
+.nm-topbar-title { font-size: 18px; font-weight: 500; color: #fff; margin: 0; }
+.nm-topbar-sub { font-size: 12.5px; color: #B8D4F0; margin: 2px 0 0; }
+.nm-badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; margin-left: 6px; }
 .badge-green { background: #FFB500; color: #003366; }
 .badge-blue  { background: #004080; color: #B8D4F0; }
 
 /* KPI cards */
 .kpi-card { background: #fff; border: 0.5px solid #E0E8F4; border-radius: 10px; padding: 14px 18px; border-left: 3px solid #1B4F8A; }
-.kpi-label { font-size: 10px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 5px; }
-.kpi-value { font-size: 24px; font-weight: 500; color: #0F1929; margin: 0 0 3px; }
-.kpi-delta-up   { font-size: 11px; color: #003D00; margin: 0; }
-.kpi-delta-flat { font-size: 11px; color: #6B7280; margin: 0; }
+.kpi-label { font-size: 11.5px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 5px; }
+.kpi-value { font-size: 30px; font-weight: 500; color: #0F1929; margin: 0 0 3px; }
+.kpi-delta-up   { font-size: 12.5px; color: #003D00; margin: 0; }
+.kpi-delta-flat { font-size: 12.5px; color: #6B7280; margin: 0; }
 
 /* Portfolio cards */
 .port-card { background: #fff; border: 0.5px solid #E0E8F4; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; }
 .port-card:hover { border-color: #FFB500; }
 .port-card.selected { border: 1.5px solid #FFB500; background: #F5F9FF; }
-.port-name { font-size: 13px; font-weight: 500; color: #0F1929; margin: 0 0 3px; }
-.port-meta { font-size: 11px; color: #6B7280; margin: 0 0 8px; }
+.port-name { font-size: 15px; font-weight: 500; color: #0F1929; margin: 0 0 3px; }
+.port-meta { font-size: 12.5px; color: #6B7280; margin: 0 0 8px; }
 
 /* Risk pills */
-.risk-pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+.risk-pill { display: inline-block; font-size: 11.5px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
 .risk-agg  { background: #FCEBEB; color: #A32D2D; }
 .risk-bal  { background: #E6F1FB; color: #003366; }
 .risk-gro  { background: #FAEEDA; color: #633806; }
@@ -140,16 +149,16 @@ div[data-testid="stAppViewBlockContainer"] { padding-top: 0.5rem !important; }
 
 /* Chart cards */
 .chart-card { background: #fff; border: 0.5px solid #E0E8F4; border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
-.chart-title { font-size: 13px; font-weight: 500; color: #0F1929; margin: 0 0 14px; }
+.chart-title { font-size: 16px; font-weight: 600; color: #0F1929; margin: 0 0 14px; }
 
 /* Data table */
-.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
-.tbl th { padding: 8px 12px; text-align: left; font-size: 10px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #003366; font-weight: 500; }
-.tbl td { padding: 9px 12px; border-bottom: 0.5px solid #F0F4FA; color: #1A2840; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl th { padding: 9px 12px; text-align: left; font-size: 11.5px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1.5px solid #003366; font-weight: 600; }
+.tbl td { padding: 10px 12px; border-bottom: 0.5px solid #F0F4FA; color: #1A2840; }
 .tbl tr:nth-child(even) td { background: #FAFBFD; }
 
 /* Pills */
-.pill { display:inline-block; font-size:10px; font-weight:500; padding:2px 8px; border-radius:20px; }
+.pill { display:inline-block; font-size:11.5px; font-weight:500; padding:3px 9px; border-radius:20px; }
 .pill-green  { background:#EAF3DE; color:#27500A; }
 .pill-amber  { background:#FAEEDA; color:#633806; }
 .pill-blue   { background:#E6F1FB; color:#0C447C; }
@@ -162,7 +171,7 @@ div[role="radiogroup"] {
     height: 100% !important; gap: 0 !important;
 }
 div[role="radiogroup"] > label {
-    padding: 10px 16px !important; font-size: 13px !important;
+    padding: 10px 16px !important; font-size: 14.5px !important;
     font-weight: 500 !important; color: #B8D4F0 !important;
     border-bottom: 3px solid transparent !important;
     cursor: pointer !important; white-space: nowrap !important;
@@ -268,7 +277,9 @@ def nm_header(
         for label, style in badges:
             s = badge_styles.get(style, badge_styles["blue"])
             badge_html += (
-                f'<span style="{s}font-size:10px;padding:4px 10px;'
+                f'<span style="{s}font-family:\'Oswald\',sans-serif;'
+                f'text-transform:uppercase;letter-spacing:0.04em;'
+                f'font-size:11px;padding:4px 10px;'
                 f'border-radius:20px;">{label}</span>'
             )
 
@@ -283,7 +294,9 @@ def nm_header(
             tab_param = label.replace(" ", "+")
             return (
                 f'<a href="?tab={tab_param}" target="_self" '
-                f'style="text-decoration:none;font-size:13px;padding:10px 16px 12px;'
+                f'style="text-decoration:none;font-family:\'Oswald\',sans-serif;'
+                f'text-transform:uppercase;letter-spacing:0.04em;font-size:14.5px;'
+                f'padding:10px 16px 12px;'
                 f'display:inline-block;{link_style};white-space:nowrap;">'
                 f'{label}</a>'
             )
@@ -298,13 +311,13 @@ def nm_header(
     <div style="background:#003366;border-radius:12px;padding:16px 24px 0 24px;margin-bottom:16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div>
-          <span style="color:#FFB500;font-weight:700;font-size:22px;letter-spacing:-0.02em;">
+          <span style="color:#FFB500;font-family:'Oswald',sans-serif;font-weight:700;font-size:28px;text-transform:uppercase;letter-spacing:0.01em;">
             Northwestern Mutual
           </span>
-          <span style="color:#B8D4F0;font-size:13px;font-weight:400;margin-left:10px;">
+          <span style="color:#B8D4F0;font-size:15px;font-weight:400;margin-left:10px;">
             · {app_title}
           </span>
-          <p style="color:#6B8FC0;font-size:11px;margin:3px 0 0;">{subtitle}</p>
+          <p style="color:#6B8FC0;font-size:12.5px;margin:4px 0 0;">{subtitle}</p>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">{badge_html}</div>
       </div>
@@ -350,11 +363,11 @@ def nm_kpi_row(metrics: list):
         cards_html += f"""
         <div style="background:#fff;border:2px solid {accent};border-top:5px solid {accent};
                     border-radius:10px;padding:16px 20px;">
-          <p style="font-size:10px;color:#6B7280;text-transform:uppercase;
-                    letter-spacing:0.07em;margin:0 0 8px;">{m['label']}</p>
-          <p style="font-size:28px;font-weight:700;color:#003366;
+          <p style="font-family:'Oswald',sans-serif;font-size:12px;color:#6B7280;
+                    text-transform:uppercase;letter-spacing:0.07em;margin:0 0 8px;">{m['label']}</p>
+          <p style="font-size:34px;font-weight:700;color:#003366;
                     margin:0 0 5px;line-height:1;">{m['value']}</p>
-          <p style="font-size:11px;color:{dc};margin:0;font-weight:500;">{m.get('delta','')}</p>
+          <p style="font-size:12.5px;color:{dc};margin:0;font-weight:500;">{m.get('delta','')}</p>
         </div>"""
 
     n = len(metrics)
@@ -372,7 +385,9 @@ def nm_kpi_row(metrics: list):
 def nm_chart_title(title: str):
     """Render a chart section title in NM style."""
     st.markdown(
-        f'<p style="font-size:13px;font-weight:500;color:#0F1929;margin:0 0 4px;">{title}</p>',
+        f'<p style="font-family:\'Oswald\',sans-serif;text-transform:uppercase;'
+        f'letter-spacing:0.04em;font-size:17px;font-weight:600;color:#0F1929;'
+        f'margin:0 0 6px;">{title}</p>',
         unsafe_allow_html=True
     )
 
@@ -394,13 +409,13 @@ def nm_plotly_layout(height: int = 300, margin: dict = None) -> dict:
         xaxis=dict(
             showgrid=False,
             color="#111827",
-            tickfont=dict(size=10, family="DM Sans", color="#111827"),
+            tickfont=dict(size=12, family="DM Sans", color="#111827"),
             zeroline=False,
         ),
         yaxis=dict(
             showgrid=False,
             color="#111827",
-            tickfont=dict(size=10, family="DM Sans", color="#111827"),
+            tickfont=dict(size=12, family="DM Sans", color="#111827"),
             zeroline=False,
         ),
         showlegend=False,
@@ -619,9 +634,9 @@ def nm_port_card(
         <div style="width:{bar_w}%;height:100%;background:#003366;border-radius:4px;"></div>
       </div>
       <div style="display:flex;justify-content:space-between;">
-        <span style="font-size:10px;color:#6B7280;">AUM <strong style="color:#0F1929;">{fmt_aum(aum*1000)}</strong></span>
-        <span style="font-size:10px;color:#6B7280;">Holdings <strong style="color:#0F1929;">{total_holdings}</strong></span>
-        <span style="font-size:10px;color:#6B7280;">Top <strong style="color:#0F1929;">{top_holding_pct:.1f}%</strong></span>
+        <span style="font-size:11.5px;color:#6B7280;">AUM <strong style="color:#0F1929;">{fmt_aum(aum*1000)}</strong></span>
+        <span style="font-size:11.5px;color:#6B7280;">Holdings <strong style="color:#0F1929;">{total_holdings}</strong></span>
+        <span style="font-size:11.5px;color:#6B7280;">Top <strong style="color:#0F1929;">{top_holding_pct:.1f}%</strong></span>
       </div>
     </div>
     """)
