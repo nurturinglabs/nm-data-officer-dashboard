@@ -197,15 +197,31 @@ div[data-testid="stHorizontalBlock"] > div { gap: 10px; }
 # SETUP
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Load Google Fonts via <link> + preconnect. `@import` inside a Streamlit-injected
+# <style> loads unreliably on Streamlit Cloud (a fresh client falls back to system
+# fonts), so we use stylesheet links as the primary load path; the @import in
+# NM_BASE_CSS stays as a fallback.
+NM_FONT_LINKS = (
+    '<link rel="preconnect" href="https://fonts.googleapis.com">'
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    '<link rel="stylesheet" '
+    'href="https://fonts.googleapis.com/css2?'
+    'family=Oswald:wght@500;600;700&'
+    'family=Inter:wght@400;500;600;700&'
+    'family=DM+Mono&display=swap">'
+)
+
+
 def nm_inject_css():
     """
-    Inject NM base CSS. Call once at top of app.py after set_page_config().
+    Inject NM fonts + base CSS. Call once at top of app.py after set_page_config().
 
     Example:
         st.set_page_config(page_title="NM · My App", layout="wide")
         from nm_theme import nm_inject_css
         nm_inject_css()
     """
+    st.markdown(NM_FONT_LINKS, unsafe_allow_html=True)
     st.markdown(NM_BASE_CSS, unsafe_allow_html=True)
 
 
