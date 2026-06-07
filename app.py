@@ -271,30 +271,28 @@ def filing_heatmap(df: pd.DataFrame, value_col: str, height: int = 160) -> go.Fi
     vals = [float(v) for v in df[value_col].tolist()]
     vmin, vmax = min(vals), max(vals)
     span = (vmax - vmin) or 1
-    zmin, zmax = vmin - span * 0.20, vmax + span * 0.05
+    zmin, zmax = vmin - span * 0.25, vmax + span * 0.05
 
+    # Light → medium-blue scale (kept light enough that dark in-cell text stays
+    # readable on every cell). Labels are drawn via texttemplate so they always
+    # center inside their cell.
     fig = go.Figure(
         go.Heatmap(
             z=[vals],
             x=labels,
-            y=[""],
-            colorscale=[[0, "#E3ECF7"], [0.5, "#6FA0D0"], [1, "#003366"]],
+            y=["Holdings"],
+            colorscale=[[0, "#DCE8F5"], [0.5, "#9BBCDE"], [1, "#4E7CB0"]],
             zmin=zmin,
             zmax=zmax,
             xgap=5,
             ygap=5,
             showscale=False,
+            text=[[fmt_int(v) for v in vals]],
+            texttemplate="%{text}",
+            textfont=dict(family="Inter", size=15, color="#0F1929"),
             hovertemplate="%{x}: %{z:,.0f} holdings<extra></extra>",
         )
     )
-    # Per-cell value labels with contrast-aware color.
-    for v, lab in zip(vals, labels):
-        norm = (v - zmin) / (zmax - zmin)
-        fig.add_annotation(
-            x=lab, y="", text=fmt_int(v), showarrow=False,
-            font=dict(family="Inter", size=14,
-                      color="#FFFFFF" if norm > 0.5 else "#0F1929"),
-        )
     # Highlight the latest filing (last cell) in NM yellow.
     last = len(vals) - 1
     fig.add_shape(
@@ -371,10 +369,17 @@ if active_tab == "Data Freshness":
             "mart_sector_allocation": (latest, 29),
             "mart_risk_metrics": (latest, 165),
         }
+        def _iso(d):
+            return str(d)[:10]
+
         rows = []
         for label in fallback:
             last_updated, row_count = fresh.get(label, fallback[label])
-            rows.append([label, fmt_month(last_updated), fmt_int(row_count)])
+            # Flag any mart whose latest data lags the most recent filing.
+            cell = fmt_month(last_updated)
+            if _iso(last_updated) < latest:
+                cell += "  " + nm_pill("⚠ stale", "amber")
+            rows.append([label, cell, fmt_int(row_count)])
         nm_table(columns=["Mart", "Last updated", "Rows"], rows=rows,
                  title="Mart freshness")
 
